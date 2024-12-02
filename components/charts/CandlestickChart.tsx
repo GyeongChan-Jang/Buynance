@@ -1,107 +1,90 @@
+'use client'
+
 import { useEffect, useRef } from 'react'
 import Highcharts from 'highcharts/highstock'
 import HighchartsReact from 'highcharts-react-official'
 
-// Highcharts 모듈 추가
-import indicators from 'highcharts/indicators/indicators'
-import dragPanes from 'highcharts/modules/drag-panes'
-import annotationsAdvanced from 'highcharts/modules/annotations-advanced'
-import priceIndicator from 'highcharts/modules/price-indicator'
-import fullScreen from 'highcharts/modules/full-screen'
-import stockTools from 'highcharts/modules/stock-tools'
-
-// 모듈 초기화
-if (typeof Highcharts === 'object') {
-  indicators(Highcharts)
-  dragPanes(Highcharts)
-  annotationsAdvanced(Highcharts)
-  priceIndicator(Highcharts)
-  fullScreen(Highcharts)
-  stockTools(Highcharts)
-}
-
 interface CandlestickChartProps {
-  data: [number, number, number, number, number][] // [timestamp, open, high, low, close]
+  data: [number, number, number, number, number][]
 }
 
-const CandlestickChart = ({ data }: CandlestickChartProps) => {
+const CandlestickChart: React.FC<CandlestickChartProps> = ({ data }) => {
+  const chartRef = useRef<HighchartsReact.RefObject>(null)
+
   const options: Highcharts.Options = {
     chart: {
       type: 'candlestick',
-      height: 600,
-      backgroundColor: 'transparent'
-    },
-    title: {
-      text: 'BTC/USDT',
+      height: '100%',
+      backgroundColor: 'transparent',
       style: {
-        color: '#fff'
+        fontFamily: 'Inter, sans-serif'
       }
     },
-    rangeSelector: {
-      buttons: [
-        {
-          type: 'hour',
-          count: 1,
-          text: '1h'
-        },
-        {
-          type: 'day',
-          count: 1,
-          text: '1d'
-        },
-        {
-          type: 'week',
-          count: 1,
-          text: '1w'
-        },
-        {
-          type: 'month',
-          count: 1,
-          text: '1m'
-        },
-        {
-          type: 'year',
-          count: 1,
-          text: '1y'
-        },
-        {
-          type: 'all',
-          text: 'All'
-        }
-      ],
-      selected: 2
+    title: {
+      text: undefined
     },
+    // rangeSelector: {
+    //   buttons: [{
+    //     type: 'minute',
+    //     count: 15,
+    //     text: '15m'
+    //   }, {
+    //     type: 'hour',
+    //     count: 1,
+    //     text: '1h'
+    //   }, {
+    //     type: 'day',
+    //     count: 1,
+    //     text: '1d'
+    //   }, {
+    //     type: 'all',
+    //     text: 'All'
+    //   }],
+    //   selected: 1,
+    //   inputEnabled: false
+    // },
     yAxis: [
       {
         labels: {
+          align: 'right',
           style: {
-            color: '#fff'
+            color: '#888'
           }
         },
         title: {
-          text: 'Price',
-          style: {
-            color: '#fff'
-          }
+          text: 'Price'
+        },
+        height: '70%',
+        lineWidth: 2,
+        resize: {
+          enabled: true
         }
+      },
+      {
+        labels: {
+          align: 'right',
+          style: {
+            color: '#888'
+          }
+        },
+        title: {
+          text: 'Volume'
+        },
+        top: '72%',
+        height: '28%',
+        offset: 0,
+        lineWidth: 2
       }
     ],
-    xAxis: {
-      labels: {
-        style: {
-          color: '#fff'
-        }
-      }
-    },
     series: [
       {
         type: 'candlestick',
         name: 'BTC/USDT',
         data: data,
-        color: '#ef4444', // 하락봉 색상
-        upColor: '#22c55e', // 상승봉 색상
-        lineColor: '#ef4444', // 하락봉 테두리
-        upLineColor: '#22c55e' // 상승봉 테두리
+        color: '#ef4444',
+        upColor: '#22c55e',
+        lineColor: '#ef4444',
+        upLineColor: '#22c55e'
       }
     ],
     tooltip: {
@@ -114,10 +97,30 @@ const CandlestickChart = ({ data }: CandlestickChartProps) => {
                 <b>Low:</b> ${point.low}<br/>
                 <b>Close:</b> ${point.close}`
       }
+    },
+    navigator: {
+      enabled: true
+    },
+    scrollbar: {
+      enabled: false
+    },
+    credits: {
+      enabled: false
     }
   }
 
-  return <HighchartsReact highcharts={Highcharts} constructorType={'stockChart'} options={options} />
+  useEffect(() => {
+    // 차트 업데이트
+    if (chartRef.current) {
+      chartRef.current.chart.series[0].setData(data)
+    }
+  }, [data])
+
+  return (
+    <div className="w-full h-full">
+      <HighchartsReact ref={chartRef} highcharts={Highcharts} constructorType={'stockChart'} options={options} />
+    </div>
+  )
 }
 
 export default CandlestickChart
