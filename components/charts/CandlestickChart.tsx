@@ -7,7 +7,8 @@ import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ChevronDown } from 'lucide-react'
-import { formatPrice, formatVolume } from '@/utils/formatting'
+import { formatPrice } from '@/utils/formatting'
+import useMediaQuery from '@/hooks/useMediaQuery'
 
 interface CandlestickChartProps {
   data: [number, number, number, number, number][]
@@ -32,15 +33,16 @@ const defaultIntervals = ['1s', '15m', '1h', '1d']
 const CandlestickChart = ({ data, interval, onIntervalChange, baseAsset, quoteAsset }: CandlestickChartProps) => {
   const chartRef = useRef<HighchartsReact.RefObject>(null)
   const { theme } = useTheme()
+  const isMobile = useMediaQuery('(max-width: 768px)')
 
   const selectedInterval = intervals.find((int) => int.value === interval)
   const isDefaultInterval = defaultIntervals.includes(interval)
 
   const getOptions = useCallback(
-    (isDark: boolean): Highcharts.Options => ({
+    (isDark: boolean, isMobile: boolean): Highcharts.Options => ({
       chart: {
         type: 'candlestick',
-        height: '100%',
+        height: isMobile ? '100%' : '40%',
         backgroundColor: 'transparent',
         style: {
           fontFamily: 'Inter, sans-serif'
@@ -60,79 +62,43 @@ const CandlestickChart = ({ data, interval, onIntervalChange, baseAsset, quoteAs
       rangeSelector: {
         enabled: false
       },
-      yAxis: [
-        {
-          labels: {
-            align: 'left',
-            x: 8,
-            style: {
-              color: isDark ? '#e5e7eb' : '#374151'
-            },
-            formatter: function () {
-              return formatPrice(this.value as number)
-            }
+      yAxis: {
+        labels: {
+          align: 'left',
+          x: 8,
+          style: {
+            color: isDark ? '#e5e7eb' : '#374151'
           },
-          opposite: true,
-          title: {
-            text: 'Price',
-            style: {
-              color: isDark ? '#e5e7eb' : '#374151'
-            },
-            align: 'high',
-            offset: 0,
-            rotation: 0,
-            y: -10,
-            x: -8
-          },
-          height: '40%',
-          lineWidth: 2,
-          resize: {
-            enabled: true
-          },
-          gridLineColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-          minPadding: 0.1,
-          maxPadding: 0.1,
-          startOnTick: false,
-          endOnTick: false,
-          alignTicks: false,
-          softMin: undefined,
-          softMax: undefined
+          formatter: function () {
+            return formatPrice(this.value as number)
+          }
         },
-        {
-          labels: {
-            align: 'left',
-            x: 8,
-            style: {
-              color: isDark ? '#e5e7eb' : '#374151'
-            },
-            formatter: function () {
-              return formatVolume(this.value as number)
-            }
+        opposite: true,
+        title: {
+          text: 'Price',
+          style: {
+            color: isDark ? '#e5e7eb' : '#374151'
           },
-          opposite: true,
-          title: {
-            text: 'Volume',
-            style: {
-              color: isDark ? '#e5e7eb' : '#374151'
-            },
-            align: 'high',
-            offset: 0,
-            rotation: 0,
-            y: -10,
-            x: -8
-          },
-          top: '72%',
-          height: '28%',
+          align: 'high',
           offset: 0,
-          lineWidth: 2,
-          gridLineColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-          minPadding: 0.1,
-          maxPadding: 0.1,
-          startOnTick: false,
-          endOnTick: false,
-          alignTicks: false
-        }
-      ],
+          rotation: 0,
+          y: -10,
+          x: -8
+        },
+        height: '40%',
+        lineWidth: 2,
+        resize: {
+          enabled: true
+        },
+        gridLineColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+        minPadding: 0.1,
+        maxPadding: 0.1,
+        startOnTick: false,
+        endOnTick: false,
+        alignTicks: false,
+        softMin: undefined,
+        softMax: undefined
+      },
       xAxis: {
         minPadding: 0,
         maxPadding: 0,
@@ -165,30 +131,27 @@ const CandlestickChart = ({ data, interval, onIntervalChange, baseAsset, quoteAs
           lineColor: 'hsl(var(--down-color))',
           upLineColor: 'hsl(var(--up-color))'
         }
-        // {
-        //   type: 'column',
-        //   name: 'Volume',
-        //   data: data.map(([timestamp, open, _, __, close]) => ({
-        //     x: timestamp,
-        //     y: 0,
-        //     color: open < close ? 'hsla(var(--up-color), 0.5)' : 'hsla(var(--down-color), 0.5)'
-        //   })),
-        //   yAxis: 1
-        // }
       ],
       tooltip: {
         shared: true,
         formatter: function (this: any) {
-          const point = this.points?.[0]?.point || this.point
+          if (!this.points?.length) return ''
 
-          if (!point) return ''
+          const point = this.points[0]
+          const candleData = point.point as unknown as {
+            x: number
+            open: number
+            high: number
+            low: number
+            close: number
+          }
 
-          return `<b>${Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x)}</b><br/>
-                Open: ${formatPrice(point.open)}<br/>
-                High: ${formatPrice(point.high)}<br/>
-                Low: ${formatPrice(point.low)}<br/>
-                Close: ${formatPrice(point.close)}<br/>
-                `
+          return `<b>${Highcharts.dateFormat('%Y-%m-%d %H:%M', candleData.x)}</b><br/>
+                  Open: ${formatPrice(candleData.open)}<br/>
+                  High: ${formatPrice(candleData.high)}<br/>
+                  Low: ${formatPrice(candleData.low)}<br/>
+                  Close: ${formatPrice(candleData.close)}<br/>
+                  `
         }
       },
       navigator: {
@@ -220,7 +183,7 @@ const CandlestickChart = ({ data, interval, onIntervalChange, baseAsset, quoteAs
   useEffect(() => {
     if (chartRef.current) {
       const isDark = theme === 'dark'
-      const newOptions = getOptions(isDark)
+      const newOptions = getOptions(isDark, isMobile)
       chartRef.current.chart.update(newOptions, true)
     }
   }, [theme, data, getOptions])
@@ -270,7 +233,7 @@ const CandlestickChart = ({ data, interval, onIntervalChange, baseAsset, quoteAs
           ref={chartRef}
           highcharts={Highcharts}
           constructorType={'stockChart'}
-          options={getOptions(theme === 'dark')}
+          options={getOptions(theme === 'dark', isMobile)}
         />
       </div>
     </div>

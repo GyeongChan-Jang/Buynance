@@ -29,7 +29,7 @@ export default function TradePage() {
         <aside
           className={cn(
             'w-full md:w-[320px] shrink-0',
-            'min-w-[250px] max-w-[320px]',
+            'min-w-[250px] md:max-w-[320px]',
             'h-[400px] md:h-full',
             'order-3 md:order-1',
             'border-t md:border-t-0 md:border-r',
@@ -37,11 +37,7 @@ export default function TradePage() {
           )}
         >
           <div className="flex-1 overflow-hidden">
-            <OrderBook
-              symbol={params.symbol}
-              baseAsset={params.symbol.split('USDT')[0]}
-              quoteAsset="USDT"
-            />
+            <OrderBook symbol={params.symbol} baseAsset={params.symbol.split('USDT')[0]} quoteAsset="USDT" />
           </div>
         </aside>
 
@@ -69,16 +65,8 @@ export default function TradePage() {
 
           {/* 거래 영역 - 태블릿/데스크톱 */}
           <div className="hidden md:grid grid-cols-2 gap-4 md:order-3">
-            <TradeForm
-              type="buy"
-              baseAsset={params.symbol.split('USDT')[0]}
-              quoteAsset="USDT"
-            />
-            <TradeForm
-              type="sell"
-              baseAsset={params.symbol.split('USDT')[0]}
-              quoteAsset="USDT"
-            />
+            <TradeForm type="buy" baseAsset={params.symbol.split('USDT')[0]} quoteAsset="USDT" />
+            <TradeForm type="sell" baseAsset={params.symbol.split('USDT')[0]} quoteAsset="USDT" />
           </div>
         </main>
 
@@ -86,7 +74,7 @@ export default function TradePage() {
         <aside
           className={cn(
             'w-full md:w-[320px] shrink-0',
-            'min-w-[250px] max-w-[320px]',
+            'min-w-[250px] md:max-w-[320px]',
             'h-[400px] md:h-full',
             'order-4 md:order-3',
             'border-t md:border-t-0 md:border-l',
@@ -99,17 +87,9 @@ export default function TradePage() {
         </aside>
 
         {/* 거래 영역 - 모바일 */}
-        <div className="md:hidden grid grid-cols-1 gap-4 order-5">
-          <TradeForm
-            type="buy"
-            baseAsset={params.symbol.split('USDT')[0]}
-            quoteAsset="USDT"
-          />
-          <TradeForm
-            type="sell"
-            baseAsset={params.symbol.split('USDT')[0]}
-            quoteAsset="USDT"
-          />
+        <div className="mt-6 md:hidden grid grid-cols-1 gap-4 order-5">
+          <TradeForm type="buy" baseAsset={params.symbol.split('USDT')[0]} quoteAsset="USDT" />
+          <TradeForm type="sell" baseAsset={params.symbol.split('USDT')[0]} quoteAsset="USDT" />
         </div>
       </div>
     </div>
