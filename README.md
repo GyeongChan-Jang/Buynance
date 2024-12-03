@@ -1,5 +1,7 @@
 # Buynance
 
+![good](https://github.com/user-attachments/assets/0ebb79db-d361-433b-88e0-88fe84f9f3ea)
+
 ## **What I Learned**
 
 - I learned how to use and integrate **Binance API** data into a project, particularly focusing on implementing **real-time data communication** using **WebSocket**. This helped me gain a deeper understanding of real-time data handling in web applications.
@@ -18,8 +20,6 @@ Next.js 15 uses **React 19**, but many libraries are not yet compatible with thi
 - This issue became particularly problematic when using **Recoil**.
   - Errors occurred consistently when creating an `atom` and wrapping components with `RecoilRoot`. After some research, I discovered that the Recoil library had not been actively maintained for a long time.
   - I found similar issues discussed on Reddit, and based on the information, I concluded that **Recoil is not compatible with React 19** and Next.js 15.
-    ![error1](https://github.com/user-attachments/assets/46d74504-30f9-48cb-931c-f5b1d548ab7a)
-    ![error2](https://github.com/user-attachments/assets/47cc760b-5927-49f3-ba83-9c5c6edf58e6)
 - Instead of installing another state management library, I opted to use **React's built-in Context API** to manage global state, which resolved the dependency issue.
 
 ### **2. WebSocket Issues with Binance Connector for TypeScript**
