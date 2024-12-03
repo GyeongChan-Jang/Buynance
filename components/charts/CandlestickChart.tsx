@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Highcharts from 'highcharts/highstock'
 import HighchartsReact from 'highcharts-react-official'
+import { useTheme } from 'next-themes'
 
 interface CandlestickChartProps {
   data: [number, number, number, number, number][]
@@ -10,8 +11,9 @@ interface CandlestickChartProps {
 
 const CandlestickChart: React.FC<CandlestickChartProps> = ({ data }) => {
   const chartRef = useRef<HighchartsReact.RefObject>(null)
+  const { theme } = useTheme()
 
-  const options: Highcharts.Options = {
+  const getOptions = (isDark: boolean): Highcharts.Options => ({
     chart: {
       type: 'candlestick',
       height: '100%',
@@ -23,57 +25,48 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ data }) => {
     title: {
       text: undefined
     },
-    // rangeSelector: {
-    //   buttons: [{
-    //     type: 'minute',
-    //     count: 15,
-    //     text: '15m'
-    //   }, {
-    //     type: 'hour',
-    //     count: 1,
-    //     text: '1h'
-    //   }, {
-    //     type: 'day',
-    //     count: 1,
-    //     text: '1d'
-    //   }, {
-    //     type: 'all',
-    //     text: 'All'
-    //   }],
-    //   selected: 1,
-    //   inputEnabled: false
-    // },
+    rangeSelector: {
+      enabled: false
+    },
     yAxis: [
       {
         labels: {
           align: 'right',
           style: {
-            color: '#888'
+            color: isDark ? '#e5e7eb' : '#374151'
           }
         },
         title: {
-          text: 'Price'
+          text: 'Price',
+          style: {
+            color: isDark ? '#e5e7eb' : '#374151'
+          }
         },
         height: '70%',
         lineWidth: 2,
         resize: {
           enabled: true
-        }
+        },
+        gridLineColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
       },
       {
         labels: {
           align: 'right',
           style: {
-            color: '#888'
+            color: isDark ? '#e5e7eb' : '#374151'
           }
         },
         title: {
-          text: 'Volume'
+          text: 'Volume',
+          style: {
+            color: isDark ? '#e5e7eb' : '#374151'
+          }
         },
         top: '72%',
         height: '28%',
         offset: 0,
-        lineWidth: 2
+        lineWidth: 2,
+        gridLineColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
       }
     ],
     series: [
@@ -81,16 +74,16 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ data }) => {
         type: 'candlestick',
         name: 'BTC/USDT',
         data: data,
-        color: '#ef4444',
-        upColor: '#22c55e',
-        lineColor: '#ef4444',
-        upLineColor: '#22c55e'
+        color: 'hsl(var(--down-color))',
+        upColor: 'hsl(var(--up-color))',
+        lineColor: 'hsl(var(--down-color))',
+        upLineColor: 'hsl(var(--up-color))'
       }
     ],
     tooltip: {
       split: false,
-      formatter: function () {
-        const point = this.point as any
+      formatter: function (this: any) {
+        const point = this.points?.[0]?.options || this.point
         return `<b>Date:</b> ${Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x)}<br/>
                 <b>Open:</b> ${point.open}<br/>
                 <b>High:</b> ${point.high}<br/>
@@ -107,18 +100,24 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ data }) => {
     credits: {
       enabled: false
     }
-  }
+  })
 
   useEffect(() => {
-    // 차트 업데이트
     if (chartRef.current) {
-      chartRef.current.chart.series[0].setData(data)
+      const isDark = theme === 'dark'
+      const newOptions = getOptions(isDark)
+      chartRef.current.chart.update(newOptions, true)
     }
-  }, [data])
+  }, [theme, data])
 
   return (
     <div className="w-full h-full">
-      <HighchartsReact ref={chartRef} highcharts={Highcharts} constructorType={'stockChart'} options={options} />
+      <HighchartsReact
+        ref={chartRef}
+        highcharts={Highcharts}
+        constructorType={'stockChart'}
+        options={getOptions(theme === 'dark')}
+      />
     </div>
   )
 }

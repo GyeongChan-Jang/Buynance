@@ -27,7 +27,7 @@ export default function TradeLayout({ children }: { children: React.ReactNode })
       <RecoilRoot>
         <div className="flex min-h-screen bg-background relative">
           {/* 모바일 토글 버튼들 */}
-          <div className="fixed top-4 left-4 z-50 flex gap-2">
+          <div className="fixed top-4 right-4 z-50 flex gap-2">
             <Button
               variant="outline"
               size="icon"
@@ -50,7 +50,7 @@ export default function TradeLayout({ children }: { children: React.ReactNode })
           </div>
 
           {/* 왼쪽 사이드바 - 코인 목록 */}
-          <aside
+          {/* <aside
             className={cn(
               'fixed lg:relative w-64 h-full',
               'bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/75',
@@ -63,15 +63,15 @@ export default function TradeLayout({ children }: { children: React.ReactNode })
           >
             <div className="p-4 pt-16 lg:pt-4">
               <h2 className="font-bold text-lg text-foreground">Markets</h2>
-              {/* 코인 목록 컴포넌트 추가 예정 */}
+              
             </div>
-          </aside>
+          </aside> */}
 
           {/* 메인 컨텐츠 */}
           <main className="flex-1 w-full lg:w-auto">{children}</main>
 
           {/* 오른쪽 사이드바 - 주문북 */}
-          <aside
+          {/* <aside
             className={cn(
               'fixed lg:relative right-0 w-80 h-full',
               'bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/75',
@@ -84,9 +84,8 @@ export default function TradeLayout({ children }: { children: React.ReactNode })
           >
             <div className="p-4 pt-16 lg:pt-4">
               <h2 className="font-bold text-lg text-foreground">Order Book</h2>
-              {/* 주문북 컴포넌트 추가 예정 */}
             </div>
-          </aside>
+          </aside> */}
         </div>
       </RecoilRoot>
     </QueryClientProvider>
