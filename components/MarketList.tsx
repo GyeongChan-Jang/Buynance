@@ -68,7 +68,7 @@ export const MarketList = ({ onSelect, currentSymbol }: MarketListProps) => {
   return (
     <div className="h-full flex flex-col">
       <div className="p-3 border-b">
-        <h2 className="font-bold text-lg mb-3">USDT Markets</h2>
+        <h2 className="font-bold text-lg mb-3">Spot Markets</h2>
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input

@@ -25,7 +25,7 @@ export const CoinInfo = ({ symbol, baseAsset, quoteAsset }: CoinInfoProps) => {
   }
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-4 bg-card rounded-lg border">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-4 bg-card rounded-lg border mb-4">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <h1 className="text-xl font-bold">

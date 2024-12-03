@@ -85,7 +85,7 @@ export const useCandlestickData = (symbol: string, interval: string) => {
 
     ws.onmessage = (event) => {
       const parsedData: KlineWebSocketData = JSON.parse(event.data)
-      
+
       if (parsedData.e === 'kline') {
         const { k } = parsedData
         const newKline: KlineData = {
