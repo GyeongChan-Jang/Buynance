@@ -4,12 +4,12 @@ import React, { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useCandlestickData } from '@/hooks/queries/useCandlestickData'
-import { Input } from '@/components/ui/input'
 import { OrderBook } from '@/components/OrderBook'
 import { MarketList } from '@/components/MarketList'
 import { CoinInfo } from '@/components/CoinInfo'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { TradeForm } from '@/app/components/TradeForm'
 
 const CandlestickChart = dynamic(() => import('@/components/charts/CandlestickChart'), { ssr: false })
 
@@ -27,10 +27,14 @@ export default function TradePage() {
   const { data, isLoading, isWebSocketConnected } = useCandlestickData('BTCUSDT', interval)
   const [buyPrice, setBuyPrice] = useState('')
   const [sellPrice, setSellPrice] = useState('')
+  const [buyAmount, setBuyAmount] = useState('')
+  const [sellAmount, setSellAmount] = useState('')
 
-  const handlePriceSelect = (price: number) => {
+  const handlePriceSelect = (price: number, amount: number) => {
     setBuyPrice(price.toString())
     setSellPrice(price.toString())
+    setBuyAmount(amount.toString())
+    setSellAmount(amount.toString())
   }
 
   const handleMarketSelect = (symbol: string) => {
@@ -95,42 +99,24 @@ export default function TradePage() {
 
           {/* 거래 영역 - 태블릿/데스크톱 */}
           <div className="hidden md:grid grid-cols-2 gap-4 md:order-3">
-            <div className="bg-card rounded-lg p-4 border">
-              <h2 className="text-lg font-bold mb-4">Buy BTC</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm text-muted-foreground">Price (USDT)</label>
-                  <Input
-                    type="number"
-                    value={buyPrice}
-                    onChange={(e) => setBuyPrice(e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm text-muted-foreground">Amount (BTC)</label>
-                  <Input type="number" className="mt-1" />
-                </div>
-              </div>
-            </div>
-            <div className="bg-card rounded-lg p-4 border">
-              <h2 className="text-lg font-bold mb-4">Sell BTC</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm text-muted-foreground">Price (USDT)</label>
-                  <Input
-                    type="number"
-                    value={sellPrice}
-                    onChange={(e) => setSellPrice(e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm text-muted-foreground">Amount (BTC)</label>
-                  <Input type="number" className="mt-1" />
-                </div>
-              </div>
-            </div>
+            <TradeForm
+              type="buy"
+              price={buyPrice}
+              amount={buyAmount}
+              onPriceChange={setBuyPrice}
+              onAmountChange={setBuyAmount}
+              baseAsset="BTC"
+              quoteAsset="USDT"
+            />
+            <TradeForm
+              type="sell"
+              price={sellPrice}
+              amount={sellAmount}
+              onPriceChange={setSellPrice}
+              onAmountChange={setSellAmount}
+              baseAsset="BTC"
+              quoteAsset="USDT"
+            />
           </div>
         </main>
 
@@ -152,37 +138,24 @@ export default function TradePage() {
 
         {/* 거래 영역 - 모바일 */}
         <div className="md:hidden grid grid-cols-1 gap-4 order-5">
-          <div className="bg-card rounded-lg p-4 border">
-            <h2 className="text-lg font-bold mb-4">Buy BTC</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm text-muted-foreground">Price (USDT)</label>
-                <Input type="number" value={buyPrice} onChange={(e) => setBuyPrice(e.target.value)} className="mt-1" />
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground">Amount (BTC)</label>
-                <Input type="number" className="mt-1" />
-              </div>
-            </div>
-          </div>
-          <div className="bg-card rounded-lg p-4 border">
-            <h2 className="text-lg font-bold mb-4">Sell BTC</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm text-muted-foreground">Price (USDT)</label>
-                <Input
-                  type="number"
-                  value={sellPrice}
-                  onChange={(e) => setSellPrice(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground">Amount (BTC)</label>
-                <Input type="number" className="mt-1" />
-              </div>
-            </div>
-          </div>
+          <TradeForm
+            type="buy"
+            price={buyPrice}
+            amount={buyAmount}
+            onPriceChange={setBuyPrice}
+            onAmountChange={setBuyAmount}
+            baseAsset="BTC"
+            quoteAsset="USDT"
+          />
+          <TradeForm
+            type="sell"
+            price={sellPrice}
+            amount={sellAmount}
+            onPriceChange={setSellPrice}
+            onAmountChange={setSellAmount}
+            baseAsset="BTC"
+            quoteAsset="USDT"
+          />
         </div>
       </div>
     </div>

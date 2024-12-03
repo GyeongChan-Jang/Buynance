@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 
 interface OrderBookProps {
   symbol: string
-  onPriceSelect: (price: number) => void
+  onPriceSelect: (price: number, amount: number) => void
 }
 
 export const OrderBook = ({ symbol, onPriceSelect }: OrderBookProps) => {
@@ -68,7 +68,7 @@ export const OrderBook = ({ symbol, onPriceSelect }: OrderBookProps) => {
                 <tr
                   key={i}
                   className="relative hover:bg-accent/50 cursor-pointer"
-                  onClick={() => onPriceSelect(ask.price)}
+                  onClick={() => onPriceSelect(ask.price, ask.quantity)}
                 >
                   <td className="p-1 text-red-500 relative z-10 w-[30%]">{formatPrice(ask.price)}</td>
                   <td className="p-1 text-right relative z-10 w-[40%]">{formatAmount(ask.quantity)}</td>
@@ -100,7 +100,7 @@ export const OrderBook = ({ symbol, onPriceSelect }: OrderBookProps) => {
                 <tr
                   key={i}
                   className="relative hover:bg-accent/50 cursor-pointer"
-                  onClick={() => onPriceSelect(bid.price)}
+                  onClick={() => onPriceSelect(bid.price, bid.quantity)}
                 >
                   <td className="p-1 text-green-500 relative z-10 w-[30%]">{formatPrice(bid.price)}</td>
                   <td className="p-1 text-right relative z-10 w-[40%]">{formatAmount(bid.quantity)}</td>
