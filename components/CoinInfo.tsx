@@ -34,7 +34,7 @@ export const CoinInfo = ({ symbol, baseAsset, quoteAsset }: CoinInfoProps) => {
           <span className={cn('w-2 h-2 rounded-full', isConnected ? 'bg-green-500' : 'bg-red-500')} />
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xl font-semibold">{formatNumber(lastPrice)}</span>
+          <span className="text-xl font-semibold">{`$${formatNumber(lastPrice)}`}</span>
           <span className={cn('text-sm font-medium', priceChangePercent >= 0 ? 'text-green-500' : 'text-red-500')}>
             {priceChangePercent >= 0 ? '+' : ''}
             {priceChangePercent.toFixed(2)}%

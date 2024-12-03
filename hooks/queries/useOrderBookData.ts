@@ -31,11 +31,11 @@ export const useOrderBookData = (symbol: string) => {
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data)
 
-      // 누적 수량 계산
       const processOrders = (orders: [string, string][]): OrderBookEntry[] => {
         let total = 0
+
         return orders.map(([price, quantity]) => {
-          total += parseFloat(quantity)
+          total += parseFloat(price) * parseFloat(quantity)
           return {
             price: parseFloat(price),
             quantity: parseFloat(quantity),
