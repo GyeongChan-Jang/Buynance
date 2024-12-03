@@ -2,12 +2,10 @@
 
 import React, { useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { RecoilRoot } from 'recoil'
 import { Button } from '@/components/ui/button'
 import { Menu, X } from 'lucide-react'
 import { ThemeToggle } from '@/theme/ThemeToggle'
-import { cn } from '@/lib/utils'
-import { ThemeProvider } from '@/theme/ThemeProvider'
+import { TradeFormProvider } from '@/lib/contexts/TradeFormContext'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,7 +22,7 @@ export default function TradeLayout({ children }: { children: React.ReactNode })
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RecoilRoot>
+      <TradeFormProvider>
         <div className="flex min-h-screen bg-background relative">
           {/* 모바일 토글 버튼들 */}
           <div className="fixed top-4 right-4 z-50 flex gap-2">
@@ -52,7 +50,7 @@ export default function TradeLayout({ children }: { children: React.ReactNode })
           {/* 메인 컨텐츠 */}
           <main className="flex-1 w-full lg:w-auto">{children}</main>
         </div>
-      </RecoilRoot>
+      </TradeFormProvider>
     </QueryClientProvider>
   )
 }

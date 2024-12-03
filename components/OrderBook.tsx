@@ -4,18 +4,19 @@ import { useOrderBookData } from '@/hooks/queries/useOrderBookData'
 import { cn, formatPrice, formatAmount } from '@/utils/formatting'
 import { useEffect, useRef, useState } from 'react'
 import { ArrowUp, ArrowDown } from 'lucide-react'
+import { useTradeForm } from '@/lib/contexts/TradeFormContext'
 
 interface OrderBookProps {
   symbol: string
-  onPriceSelect: (price: number, amount: number) => void
   baseAsset: string
   quoteAsset: string
 }
 
-export const OrderBook = ({ symbol, onPriceSelect, baseAsset, quoteAsset }: OrderBookProps) => {
+export const OrderBook = ({ symbol, baseAsset, quoteAsset }: OrderBookProps) => {
   const { orderBook, isConnected } = useOrderBookData(symbol)
   const prevPriceRef = useRef(orderBook.bids[0]?.price)
   const [priceFlash, setPriceFlash] = useState<'flash-green' | 'flash-red' | null>(null)
+  const { updateBuyForm, updateSellForm } = useTradeForm()
 
   useEffect(() => {
     const currentPrice = orderBook.bids[0]?.price
@@ -42,6 +43,14 @@ export const OrderBook = ({ symbol, onPriceSelect, baseAsset, quoteAsset }: Orde
   // 각 섹션(asks/bids)별로 최대 total 값 계산
   const maxAskTotal = Math.max(...orderBook.asks.map((ask) => ask.total))
   const maxBidTotal = Math.max(...orderBook.bids.map((bid) => bid.total))
+
+  const handleBuyClick = (price: number, amount: number) => {
+    updateBuyForm(price.toString(), amount.toString())
+  }
+
+  const handleSellClick = (price: number, amount: number) => {
+    updateSellForm(price.toString(), amount.toString())
+  }
 
   return (
     <div className="h-full flex flex-col">
@@ -72,7 +81,7 @@ export const OrderBook = ({ symbol, onPriceSelect, baseAsset, quoteAsset }: Orde
                 <tr
                   key={i}
                   className="relative hover:bg-accent/50 cursor-pointer"
-                  onClick={() => onPriceSelect(ask.price, ask.quantity)}
+                  onClick={() => handleSellClick(ask.price, ask.quantity)}
                 >
                   <td className="p-1 text-red-500 relative z-10 w-[30%]">{formatPrice(ask.price)}</td>
                   <td className="p-1 text-right relative z-10 w-[40%]">{formatAmount(ask.quantity)}</td>
@@ -113,7 +122,7 @@ export const OrderBook = ({ symbol, onPriceSelect, baseAsset, quoteAsset }: Orde
                 <tr
                   key={i}
                   className="relative hover:bg-accent/50 cursor-pointer"
-                  onClick={() => onPriceSelect(bid.price, bid.quantity)}
+                  onClick={() => handleBuyClick(bid.price, bid.quantity)}
                 >
                   <td className="p-1 text-green-500 relative z-10 w-[30%]">{formatPrice(bid.price)}</td>
                   <td className="p-1 text-right relative z-10 w-[40%]">{formatAmount(bid.quantity)}</td>

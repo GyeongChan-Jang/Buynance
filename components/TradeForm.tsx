@@ -1,29 +1,30 @@
-import React from 'react'
+'use client'
+
+import { useTradeForm } from '@/lib/contexts/TradeFormContext'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 interface TradeFormProps {
   type: 'buy' | 'sell'
-  price: string
-  amount: string
-  onPriceChange: (value: string) => void
-  onAmountChange: (value: string) => void
   baseAsset?: string
   quoteAsset?: string
 }
 
-export function TradeForm({
-  type,
-  price,
-  amount,
-  onPriceChange,
-  onAmountChange,
-  baseAsset,
-  quoteAsset
-}: TradeFormProps) {
+export function TradeForm({ type, baseAsset, quoteAsset }: TradeFormProps) {
+  const { tradeForm, updateForm } = useTradeForm()
+  const formData = type === 'buy' ? tradeForm.buy : tradeForm.sell
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateForm(type, 'price', e.target.value)
+  }
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateForm(type, 'amount', e.target.value)
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(`${type} order:`, { price, amount })
+    console.log(`${type} order:`, formData)
   }
 
   return (
@@ -32,11 +33,11 @@ export function TradeForm({
       <div className="space-y-4">
         <div>
           <label className="text-sm text-muted-foreground">Price ({quoteAsset})</label>
-          <Input type="number" value={price} onChange={(e) => onPriceChange(e.target.value)} className="mt-1" />
+          <Input type="number" value={formData.price} onChange={handlePriceChange} className="mt-1" />
         </div>
         <div>
           <label className="text-sm text-muted-foreground">Amount ({baseAsset})</label>
-          <Input type="number" value={amount} onChange={(e) => onAmountChange(e.target.value)} className="mt-1" />
+          <Input type="number" value={formData.amount} onChange={handleAmountChange} className="mt-1" />
         </div>
         <Button type="submit" className="w-full" variant={type === 'buy' ? 'default' : 'destructive'}>
           {type === 'buy' ? 'Buy' : 'Sell'} {baseAsset}

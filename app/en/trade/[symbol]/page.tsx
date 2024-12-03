@@ -8,7 +8,7 @@ import { OrderBook } from '@/components/OrderBook'
 import { MarketList } from '@/components/MarketList'
 import { CoinInfo } from '@/components/CoinInfo'
 import { cn } from '@/lib/utils'
-import { TradeForm } from '@/app/components/TradeForm'
+import { TradeForm } from '@/components/TradeForm'
 
 const CandlestickChart = dynamic(() => import('@/components/charts/CandlestickChart'), { ssr: false })
 
@@ -17,17 +17,6 @@ export default function TradePage() {
   const router = useRouter()
   const [interval, setInterval] = useState<string>('15m')
   const { data, isLoading } = useCandlestickData(params.symbol, interval)
-  const [buyPrice, setBuyPrice] = useState('')
-  const [sellPrice, setSellPrice] = useState('')
-  const [buyAmount, setBuyAmount] = useState('')
-  const [sellAmount, setSellAmount] = useState('')
-
-  const handlePriceSelect = (price: number, amount: number) => {
-    setBuyPrice(price.toString())
-    setSellPrice(price.toString())
-    setBuyAmount(amount.toString())
-    setSellAmount(amount.toString())
-  }
 
   const handleMarketSelect = (symbol: string) => {
     router.push(`/en/trade/${symbol}`)
@@ -50,7 +39,6 @@ export default function TradePage() {
           <div className="flex-1 overflow-hidden">
             <OrderBook
               symbol={params.symbol}
-              onPriceSelect={handlePriceSelect}
               baseAsset={params.symbol.split('USDT')[0]}
               quoteAsset="USDT"
             />
@@ -83,19 +71,11 @@ export default function TradePage() {
           <div className="hidden md:grid grid-cols-2 gap-4 md:order-3">
             <TradeForm
               type="buy"
-              price={buyPrice}
-              amount={buyAmount}
-              onPriceChange={setBuyPrice}
-              onAmountChange={setBuyAmount}
               baseAsset={params.symbol.split('USDT')[0]}
               quoteAsset="USDT"
             />
             <TradeForm
               type="sell"
-              price={sellPrice}
-              amount={sellAmount}
-              onPriceChange={setSellPrice}
-              onAmountChange={setSellAmount}
               baseAsset={params.symbol.split('USDT')[0]}
               quoteAsset="USDT"
             />
@@ -122,19 +102,11 @@ export default function TradePage() {
         <div className="md:hidden grid grid-cols-1 gap-4 order-5">
           <TradeForm
             type="buy"
-            price={buyPrice}
-            amount={buyAmount}
-            onPriceChange={setBuyPrice}
-            onAmountChange={setBuyAmount}
             baseAsset={params.symbol.split('USDT')[0]}
             quoteAsset="USDT"
           />
           <TradeForm
             type="sell"
-            price={sellPrice}
-            amount={sellAmount}
-            onPriceChange={setSellPrice}
-            onAmountChange={setSellAmount}
             baseAsset={params.symbol.split('USDT')[0]}
             quoteAsset="USDT"
           />
