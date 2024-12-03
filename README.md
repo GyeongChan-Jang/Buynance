@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Buynance
 
-## Getting Started
+## **What I Learned**
 
-First, run the development server:
+- I learned how to use and integrate **Binance API** data into a project, particularly focusing on implementing **real-time data communication** using **WebSocket**. This helped me gain a deeper understanding of real-time data handling in web applications.
+- I realized that visualizing **financial data** on a chart is more complex than working with standard charts. It required a significant amount of domain-specific knowledge in finance, and I was able to acquire and apply that knowledge effectively.
+- I had the opportunity to explore **OrderBook** in depth. I gained a detailed understanding of how bid and ask orders accumulate, and how prices are determined and executed based on these orders during the development process.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## **Challenges and How I Overcame Them**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### **1. Compatibility Issues with Next.js 15**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Next.js 15 uses **React 19**, but many libraries are not yet compatible with this version, which led to compatibility issues.
 
-## Learn More
+- Most libraries did not support React 19, so I used `npm install --legacy-peer-deps` to bypass **peerDependencies conflicts** during installation.
+- This issue became particularly problematic when using **Recoil**.
+  - Errors occurred consistently when creating an `atom` and wrapping components with `RecoilRoot`. After some research, I discovered that the Recoil library had not been actively maintained for a long time.
+  - I found similar issues discussed on Reddit, and based on the information, I concluded that **Recoil is not compatible with React 19** and Next.js 15.
+    ![error1](https://github.com/user-attachments/assets/46d74504-30f9-48cb-931c-f5b1d548ab7a)
+    ![error2](https://github.com/user-attachments/assets/47cc760b-5927-49f3-ba83-9c5c6edf58e6)
+- Instead of installing another state management library, I opted to use **React's built-in Context API** to manage global state, which resolved the dependency issue.
 
-To learn more about Next.js, take a look at the following resources:
+### **2. WebSocket Issues with Binance Connector for TypeScript**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The [binance-connector-typescript](https://github.com/binance/binance-connector-typescript) library encountered errors when using WebSocket in a browser environment.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- To resolve this, I implemented the WebSocket communication manually using the **native WebSocket object** in JavaScript, which ensured stable real-time data transmission.
 
-## Deploy on Vercel
+### **3. Implementing a Responsive Chart**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+I faced challenges when trying to implement a **responsive chart** that adjusted its size based on the screen resolution. Like many chart libraries, it did not automatically adapt to different screen sizes in a seamless manner.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- I solved this by using **ResizeObserver** to monitor changes in the size of the chart container.
+- By manipulating the container's `ref` and dynamically updating the `height` value, I was able to achieve a fully responsive chart layout that adjusted smoothly to different screen sizes.

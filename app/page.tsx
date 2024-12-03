@@ -37,7 +37,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl py-32 sm:py-48 lg:py-56">
           <div className="text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-8">Trade Crypto with Confidence</h1>
+              <h1 className="text-4xl font-bold tracking-tight sm:text-6xl mb-8">Trade Crypto in Buynance</h1>
               <p className="text-lg leading-8 text-muted-foreground max-w-2xl mx-auto mb-8">
                 Experience the next generation of crypto trading with our advanced platform. Real-time data, secure
                 transactions, and professional tools at your fingertips.
