@@ -28,16 +28,18 @@ export function TradeForm({ type, baseAsset, quoteAsset }: TradeFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-card rounded-lg p-4 border">
-      <h2 className="text-lg font-bold mb-4">{type === 'buy' ? `Buy ${baseAsset}` : `Sell ${baseAsset}`}</h2>
+    <form onSubmit={handleSubmit} className="bg-card rounded-lg p-3 border">
+      <h2 className="text-lg font-bold mb-2">{type === 'buy' ? `Buy ${baseAsset}` : `Sell ${baseAsset}`}</h2>
       <div className="space-y-4">
-        <div>
-          <label className="text-sm text-muted-foreground">Price ({quoteAsset})</label>
-          <Input type="number" value={formData.price} onChange={handlePriceChange} className="mt-1" />
-        </div>
-        <div>
-          <label className="text-sm text-muted-foreground">Amount ({baseAsset})</label>
-          <Input type="number" value={formData.amount} onChange={handleAmountChange} className="mt-1" />
+        <div className="flex space-x-4">
+          <div className="flex-1">
+            <label className="text-sm text-muted-foreground">Price ({quoteAsset})</label>
+            <Input type="number" value={formData.price} onChange={handlePriceChange} className="mt-1" />
+          </div>
+          <div className="flex-1">
+            <label className="text-sm text-muted-foreground">Amount ({baseAsset})</label>
+            <Input type="number" value={formData.amount} onChange={handleAmountChange} className="mt-1" />
+          </div>
         </div>
         <Button type="submit" className="w-full" variant={type === 'buy' ? 'default' : 'destructive'}>
           {type === 'buy' ? 'Buy' : 'Sell'} {baseAsset}

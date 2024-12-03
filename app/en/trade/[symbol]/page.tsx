@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { useParams, useRouter } from 'next/navigation'
 import { useCandlestickData } from '@/hooks/queries/useCandlestickData'
@@ -17,6 +17,7 @@ export default function TradePage() {
   const router = useRouter()
   const [interval, setInterval] = useState<string>('15m')
   const { data, isLoading } = useCandlestickData(params.symbol, interval)
+  const chartContainerRef = useRef<HTMLDivElement>(null)
 
   const handleMarketSelect = (symbol: string) => {
     router.push(`/en/trade/${symbol}`)
@@ -28,8 +29,8 @@ export default function TradePage() {
         {/* 왼쪽 사이드바 - 오더북 */}
         <aside
           className={cn(
-            'w-full md:w-[320px] shrink-0',
-            'min-w-[250px] md:max-w-[320px]',
+            'w-full md:w-[300px] shrink-0',
+            'min-w-[250px] md:max-w-[300px]',
             'h-[400px] md:h-full',
             'order-3 md:order-1',
             'border-t md:border-t-0 md:border-r',
@@ -47,7 +48,7 @@ export default function TradePage() {
           <CoinInfo symbol={params.symbol} baseAsset={params.symbol.split('USDT')[0]} quoteAsset="USDT" />
 
           {/* 차트 영역 */}
-          <div className="flex-1 min-h-[400px] bg-card rounded-lg overflow-hidden border mb-4">
+          <div ref={chartContainerRef} className="flex-1 min-h-[400px] bg-card rounded-lg overflow-hidden border mb-4">
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
                 <span className="text-lg text-muted-foreground">Loading chart...</span>
@@ -59,6 +60,7 @@ export default function TradePage() {
                 onIntervalChange={setInterval}
                 baseAsset={params.symbol.split('USDT')[0]}
                 quoteAsset="USDT"
+                containerRef={chartContainerRef}
               />
             )}
           </div>
@@ -87,7 +89,7 @@ export default function TradePage() {
         </aside>
 
         {/* 거래 영역 - 모바일 */}
-        <div className="mt-6 md:hidden grid grid-cols-1 gap-4 order-5">
+        <div className="md:hidden grid grid-cols-1 gap-4 order-5">
           <TradeForm type="buy" baseAsset={params.symbol.split('USDT')[0]} quoteAsset="USDT" />
           <TradeForm type="sell" baseAsset={params.symbol.split('USDT')[0]} quoteAsset="USDT" />
         </div>

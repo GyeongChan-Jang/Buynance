@@ -77,7 +77,7 @@ export const OrderBook = ({ symbol, baseAsset, quoteAsset }: OrderBookProps) => 
               </tr>
             </thead>
             <tbody>
-              {orderBook.asks.slice(0, 15).map((ask, i) => (
+              {orderBook.asks.slice(0, 14).map((ask, i) => (
                 <tr
                   key={i}
                   className="relative hover:bg-accent/50 cursor-pointer"
@@ -118,7 +118,7 @@ export const OrderBook = ({ symbol, baseAsset, quoteAsset }: OrderBookProps) => 
         <div className="flex-1 overflow-hidden">
           <table className="w-full h-full relative">
             <tbody>
-              {orderBook.bids.slice(0, 15).map((bid, i) => (
+              {orderBook.bids.slice(0, 14).map((bid, i) => (
                 <tr
                   key={i}
                   className="relative hover:bg-accent/50 cursor-pointer"

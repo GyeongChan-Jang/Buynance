@@ -13,11 +13,11 @@ export default {
         flash: {
           '0%': { opacity: '1' },
           '50%': { opacity: '0.5' },
-          '100%': { opacity: '1' },
+          '100%': { opacity: '1' }
         }
       },
       animation: {
-        flash: 'flash 0.5s ease-in-out',
+        flash: 'flash 0.5s ease-in-out'
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -65,6 +65,9 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)'
+      },
+      screens: {
+        '2xl': '1350px'
       }
     }
   },
