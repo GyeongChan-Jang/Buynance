@@ -72,3 +72,51 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes flash {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-flash {
+  animation: flash 0.5s ease-in-out;
+}
+
+@keyframes flash-bg-green {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgb(22 163 74 / 0.1);  /* green-500 with opacity */
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes flash-bg-red {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgb(239 68 68 / 0.1);  /* red-500 with opacity */
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.animate-flash-bg-green {
+  animation: flash-bg-green 0.5s ease-in-out;
+}
+
+.animate-flash-bg-red {
+  animation: flash-bg-red 0.5s ease-in-out;
+}

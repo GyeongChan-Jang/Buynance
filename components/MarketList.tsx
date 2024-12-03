@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { MarketTicker, useMarketData } from '@/hooks/queries/useMarketData'
 import { ArrowDown, ArrowUp, ArrowUpDown, RotateCw, Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface MarketListProps {
   onSelect: (symbol: string) => void
@@ -15,11 +15,42 @@ interface MarketListProps {
 type ViewMode = 'volume' | 'change'
 type SortField = 'baseAsset' | 'lastPrice' | 'priceChangePercent' | 'volume' | null
 
+interface FlashState {
+  [key: string]: {
+    type: 'flash-green' | 'flash-red' | null;
+    lastPrice: number;
+  }
+}
+
 export const MarketList = ({ onSelect, currentSymbol }: MarketListProps) => {
   const { tickers, isLoading, search, setSearch } = useMarketData()
   const [viewMode, setViewMode] = useState<ViewMode>('volume')
   const [sortField, setSortField] = useState<SortField>(null)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [flashStates, setFlashStates] = useState<FlashState>({})
+  const prevTickersRef = useRef<{ [key: string]: number }>({})
+
+  useEffect(() => {
+    const newFlashStates: FlashState = {}
+    
+    tickers.forEach((ticker: MarketTicker) => {
+      const prevPrice = prevTickersRef.current[ticker.symbol]
+      if (prevPrice !== undefined && prevPrice !== ticker.lastPrice) {
+        newFlashStates[ticker.symbol] = {
+          type: ticker.lastPrice > prevPrice ? 'flash-green' : 'flash-red',
+          lastPrice: ticker.lastPrice
+        }
+      }
+      prevTickersRef.current[ticker.symbol] = ticker.lastPrice
+    })
+
+    if (Object.keys(newFlashStates).length > 0) {
+      setFlashStates(newFlashStates)
+      setTimeout(() => {
+        setFlashStates({})
+      }, 1000)
+    }
+  }, [tickers])
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -128,16 +159,27 @@ export const MarketList = ({ onSelect, currentSymbol }: MarketListProps) => {
                 key={ticker.symbol}
                 className={cn(
                   'grid grid-cols-[1fr_110px_110px] gap-1 p-2 text-xs hover:bg-accent/50 cursor-pointer',
-                  currentSymbol === ticker.symbol && 'bg-accent'
+                  currentSymbol === ticker.symbol && 'bg-accent',
+                  flashStates[ticker.symbol]?.type === 'flash-green' && 'animate-flash-bg-green',
+                  flashStates[ticker.symbol]?.type === 'flash-red' && 'animate-flash-bg-red'
                 )}
                 onClick={() => onSelect(ticker.symbol)}
               >
                 <div className="font-medium truncate">{ticker.baseAsset}</div>
-                <div className="text-right">{formatNumber(ticker.lastPrice)}</div>
+                <div className={cn(
+                  'text-right tabular-nums',
+                  flashStates[ticker.symbol]?.type && 'animate-flash',
+                  flashStates[ticker.symbol]?.type === 'flash-green' && 'text-green-500',
+                  flashStates[ticker.symbol]?.type === 'flash-red' && 'text-red-500'
+                )}>
+                  {formatNumber(ticker.lastPrice)}
+                </div>
                 {viewMode === 'volume' ? (
-                  <div className="text-right">{formatVolume(ticker.volume)}</div>
+                  <div className="text-right tabular-nums">{formatVolume(ticker.volume)}</div>
                 ) : (
-                  <div className={cn('text-right', ticker.priceChangePercent >= 0 ? 'text-green-500' : 'text-red-500')}>
+                  <div className={cn('text-right tabular-nums', 
+                    ticker.priceChangePercent >= 0 ? 'text-green-500' : 'text-red-500'
+                  )}>
                     {ticker.priceChangePercent.toFixed(2)}%
                   </div>
                 )}

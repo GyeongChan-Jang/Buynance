@@ -2,6 +2,8 @@
 
 import { useOrderBookData } from '@/hooks/queries/useOrderBookData'
 import { cn, formatPrice, formatAmount } from '@/utils/formatting'
+import { useEffect, useRef, useState } from 'react'
+import { ArrowUp, ArrowDown } from 'lucide-react'
 
 interface OrderBookProps {
   symbol: string
@@ -12,6 +14,18 @@ interface OrderBookProps {
 
 export const OrderBook = ({ symbol, onPriceSelect, baseAsset, quoteAsset }: OrderBookProps) => {
   const { orderBook, isConnected } = useOrderBookData(symbol)
+  const prevPriceRef = useRef(orderBook.bids[0]?.price)
+  const [priceFlash, setPriceFlash] = useState<'flash-green' | 'flash-red' | null>(null)
+
+  useEffect(() => {
+    const currentPrice = orderBook.bids[0]?.price
+    if (prevPriceRef.current !== currentPrice && currentPrice !== undefined) {
+      setPriceFlash(currentPrice > prevPriceRef.current ? 'flash-green' : 'flash-red')
+      const timer = setTimeout(() => setPriceFlash(null), 1000)
+      prevPriceRef.current = currentPrice
+      return () => clearTimeout(timer)
+    }
+  }, [orderBook.bids])
 
   // console.log(orderBook)
 
@@ -76,10 +90,19 @@ export const OrderBook = ({ symbol, onPriceSelect, baseAsset, quoteAsset }: Orde
         </div>
 
         {/* Current Price */}
-        <div className="p-2 text-center border-y bg-accent/50">
-          <span className="text-sm font-bold">
+        <div className="p-2 text-center border-y bg-accent/50 flex items-center justify-center gap-2">
+          <span
+            className={cn(
+              'text-sm font-bold tabular-nums',
+              priceFlash && 'animate-flash',
+              priceFlash === 'flash-green' && 'text-green-500',
+              priceFlash === 'flash-red' && 'text-red-500'
+            )}
+          >
             {orderBook.bids[0]?.price ? `$${formatPrice(orderBook.bids[0].price)}` : '-'}
           </span>
+          {priceFlash === 'flash-green' && <ArrowUp size={14} className="text-green-500" />}
+          {priceFlash === 'flash-red' && <ArrowDown size={14} className="text-red-500" />}
         </div>
 
         {/* Bids (Buy Orders) */}

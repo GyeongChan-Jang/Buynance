@@ -9,6 +9,16 @@ export default {
   ],
   theme: {
     extend: {
+      keyframes: {
+        flash: {
+          '0%': { opacity: '1' },
+          '50%': { opacity: '0.5' },
+          '100%': { opacity: '1' },
+        }
+      },
+      animation: {
+        flash: 'flash 0.5s ease-in-out',
+      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
