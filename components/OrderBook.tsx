@@ -1,29 +1,19 @@
 'use client'
 
 import { useOrderBookData } from '@/hooks/queries/useOrderBookData'
-import { cn } from '@/lib/utils'
+import { cn, formatPrice, formatAmount } from '@/utils/formatting'
 
 interface OrderBookProps {
   symbol: string
   onPriceSelect: (price: number, amount: number) => void
+  baseAsset: string
+  quoteAsset: string
 }
 
-export const OrderBook = ({ symbol, onPriceSelect }: OrderBookProps) => {
+export const OrderBook = ({ symbol, onPriceSelect, baseAsset, quoteAsset }: OrderBookProps) => {
   const { orderBook, isConnected } = useOrderBookData(symbol)
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(price)
-  }
-
-  const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 6,
-      maximumFractionDigits: 6
-    }).format(amount)
-  }
+  // console.log(orderBook)
 
   const formatTotal = (total: number) => {
     if (total >= 1000000) {
@@ -58,9 +48,9 @@ export const OrderBook = ({ symbol, onPriceSelect }: OrderBookProps) => {
           <table className="w-full h-full relative">
             <thead className="sticky top-0 bg-card">
               <tr className="text-muted-foreground">
-                <th className="p-1 text-left w-[30%]">Price(USDT)</th>
-                <th className="p-1 text-right w-[40%]">Amount(BTC)</th>
-                <th className="p-1 text-right w-[30%]">Total(USDT)</th>
+                <th className="p-1 text-left w-[30%]">Price({quoteAsset})</th>
+                <th className="p-1 text-right w-[40%]">Amount({baseAsset})</th>
+                <th className="p-1 text-right w-[30%]">Total({quoteAsset})</th>
               </tr>
             </thead>
             <tbody>

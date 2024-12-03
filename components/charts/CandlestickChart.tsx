@@ -7,11 +7,14 @@ import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ChevronDown } from 'lucide-react'
+import { formatPrice, formatVolume } from '@/utils/formatting'
 
 interface CandlestickChartProps {
   data: [number, number, number, number, number][]
   interval: string
   onIntervalChange: (interval: string) => void
+  baseAsset: string
+  quoteAsset: string
 }
 
 const intervals = [
@@ -26,7 +29,7 @@ const intervals = [
 
 const defaultIntervals = ['1s', '15m', '1h', '1d']
 
-const CandlestickChart: React.FC<CandlestickChartProps> = ({ data, interval, onIntervalChange }) => {
+const CandlestickChart = ({ data, interval, onIntervalChange, baseAsset, quoteAsset }: CandlestickChartProps) => {
   const chartRef = useRef<HighchartsReact.RefObject>(null)
   const { theme } = useTheme()
 
@@ -63,6 +66,9 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ data, interval, onI
           x: 8,
           style: {
             color: isDark ? '#e5e7eb' : '#374151'
+          },
+          formatter: function () {
+            return formatPrice(this.value as number)
           }
         },
         opposite: true,
@@ -97,6 +103,9 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ data, interval, onI
           x: 8,
           style: {
             color: isDark ? '#e5e7eb' : '#374151'
+          },
+          formatter: function () {
+            return formatVolume(this.value as number)
           }
         },
         opposite: true,
@@ -148,33 +157,36 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ data, interval, onI
     series: [
       {
         type: 'candlestick',
-        name: 'BTC/USDT',
+        name: `${baseAsset}/${quoteAsset}`,
         data: data,
         color: 'hsl(var(--down-color))',
         upColor: 'hsl(var(--up-color))',
         lineColor: 'hsl(var(--down-color))',
         upLineColor: 'hsl(var(--up-color))'
-      },
-      {
-        type: 'column',
-        name: 'Volume',
-        data: data.map(([timestamp, open, _, __, close]) => ({
-          x: timestamp,
-          y: 0,
-          color: open < close ? 'hsla(var(--up-color), 0.5)' : 'hsla(var(--down-color), 0.5)'
-        })),
-        yAxis: 1
       }
+      // {
+      //   type: 'column',
+      //   name: 'Volume',
+      //   data: data.map(([timestamp, open, _, __, close]) => ({
+      //     x: timestamp,
+      //     y: 0,
+      //     color: open < close ? 'hsla(var(--up-color), 0.5)' : 'hsla(var(--down-color), 0.5)'
+      //   })),
+      //   yAxis: 1
+      // }
     ],
     tooltip: {
-      split: false,
+      shared: true,
       formatter: function (this: any) {
         const point = this.points?.[0]?.options || this.point
-        return `<b>Date:</b> ${Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x)}<br/>
-                <b>Open:</b> ${point.open}<br/>
-                <b>High:</b> ${point.high}<br/>
-                <b>Low:</b> ${point.low}<br/>
-                <b>Close:</b> ${point.close}`
+
+        const candleData = point as any
+        return `<b>${Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x)}</b><br/>
+                Open: ${formatPrice(candleData.open)}<br/>
+                High: ${formatPrice(candleData.high)}<br/>
+                Low: ${formatPrice(candleData.low)}<br/>
+                Close: ${formatPrice(candleData.close)}<br/>
+                `
       }
     },
     navigator: {

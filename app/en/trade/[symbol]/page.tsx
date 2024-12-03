@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useCandlestickData } from '@/hooks/queries/useCandlestickData'
 import { OrderBook } from '@/components/OrderBook'
 import { MarketList } from '@/components/MarketList'
@@ -13,9 +13,10 @@ import { TradeForm } from '@/app/components/TradeForm'
 const CandlestickChart = dynamic(() => import('@/components/charts/CandlestickChart'), { ssr: false })
 
 export default function TradePage() {
+  const params = useParams<{ symbol: string }>()
   const router = useRouter()
   const [interval, setInterval] = useState<string>('15m')
-  const { data, isLoading } = useCandlestickData('BTCUSDT', interval)
+  const { data, isLoading } = useCandlestickData(params.symbol, interval)
   const [buyPrice, setBuyPrice] = useState('')
   const [sellPrice, setSellPrice] = useState('')
   const [buyAmount, setBuyAmount] = useState('')
@@ -47,14 +48,19 @@ export default function TradePage() {
           )}
         >
           <div className="flex-1 overflow-hidden">
-            <OrderBook symbol="BTCUSDT" onPriceSelect={handlePriceSelect} />
+            <OrderBook
+              symbol={params.symbol}
+              onPriceSelect={handlePriceSelect}
+              baseAsset={params.symbol.split('USDT')[0]}
+              quoteAsset="USDT"
+            />
           </div>
         </aside>
 
         {/* 메인 컨텐츠 */}
         <main className={cn('flex-1 flex flex-col', 'min-w-0', 'order-2 md:order-2', 'md:px-4', 'h-full')}>
           {/* 코인 정보 */}
-          <CoinInfo symbol="BTCUSDT" baseAsset="BTC" quoteAsset="USDT" />
+          <CoinInfo symbol={params.symbol} baseAsset={params.symbol.split('USDT')[0]} quoteAsset="USDT" />
 
           {/* 차트 영역 */}
           <div className="flex-1 min-h-[400px] bg-card rounded-lg overflow-hidden border mb-4">
@@ -67,6 +73,8 @@ export default function TradePage() {
                 data={data as [number, number, number, number, number][]}
                 interval={interval}
                 onIntervalChange={setInterval}
+                baseAsset={params.symbol.split('USDT')[0]}
+                quoteAsset="USDT"
               />
             )}
           </div>
@@ -79,7 +87,7 @@ export default function TradePage() {
               amount={buyAmount}
               onPriceChange={setBuyPrice}
               onAmountChange={setBuyAmount}
-              baseAsset="BTC"
+              baseAsset={params.symbol.split('USDT')[0]}
               quoteAsset="USDT"
             />
             <TradeForm
@@ -88,7 +96,7 @@ export default function TradePage() {
               amount={sellAmount}
               onPriceChange={setSellPrice}
               onAmountChange={setSellAmount}
-              baseAsset="BTC"
+              baseAsset={params.symbol.split('USDT')[0]}
               quoteAsset="USDT"
             />
           </div>
@@ -118,7 +126,7 @@ export default function TradePage() {
             amount={buyAmount}
             onPriceChange={setBuyPrice}
             onAmountChange={setBuyAmount}
-            baseAsset="BTC"
+            baseAsset={params.symbol.split('USDT')[0]}
             quoteAsset="USDT"
           />
           <TradeForm
@@ -127,7 +135,7 @@ export default function TradePage() {
             amount={sellAmount}
             onPriceChange={setSellPrice}
             onAmountChange={setSellAmount}
-            baseAsset="BTC"
+            baseAsset={params.symbol.split('USDT')[0]}
             quoteAsset="USDT"
           />
         </div>

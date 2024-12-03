@@ -2,6 +2,7 @@
 
 import { useTickerData } from '@/hooks/queries/useTickerData'
 import { cn } from '@/lib/utils'
+import { formatPrice, formatPriceChange, formatPercentChange, formatVolume } from '@/utils/formatting'
 
 interface CoinInfoProps {
   symbol: string
@@ -11,18 +12,6 @@ interface CoinInfoProps {
 
 export const CoinInfo = ({ symbol, baseAsset, quoteAsset }: CoinInfoProps) => {
   const { lastPrice, priceChange, priceChangePercent, highPrice, volume, isConnected } = useTickerData(symbol)
-
-  const formatNumber = (num: number, minimumFractionDigits = 2) => {
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits,
-      maximumFractionDigits: 8
-    }).format(num)
-  }
-
-  const formatVolume = (vol: number) => {
-    const millions = vol / 1000000
-    return `${millions.toFixed(2)}M`
-  }
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-4 bg-card rounded-lg border mb-4">
@@ -34,10 +23,9 @@ export const CoinInfo = ({ symbol, baseAsset, quoteAsset }: CoinInfoProps) => {
           <span className={cn('w-2 h-2 rounded-full', isConnected ? 'bg-green-500' : 'bg-red-500')} />
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xl font-semibold">{`$${formatNumber(lastPrice)}`}</span>
+          <span className="text-xl font-semibold">{`$${formatPrice(lastPrice)}`}</span>
           <span className={cn('text-sm font-medium', priceChangePercent >= 0 ? 'text-green-500' : 'text-red-500')}>
-            {priceChangePercent >= 0 ? '+' : ''}
-            {priceChangePercent.toFixed(2)}%
+            {formatPercentChange(priceChangePercent)}
           </span>
         </div>
       </div>
@@ -45,16 +33,14 @@ export const CoinInfo = ({ symbol, baseAsset, quoteAsset }: CoinInfoProps) => {
         <div>
           <div className="text-muted-foreground">24h Change</div>
           <div className={cn('font-medium', priceChange >= 0 ? 'text-green-500' : 'text-red-500')}>
-            {priceChange >= 0 ? '+' : ''}
-            {formatNumber(priceChange)}
+            {formatPriceChange(priceChange)}
             &nbsp;
-            {priceChangePercent >= 0 ? '+' : ''}
-            {priceChangePercent.toFixed(2)}%
+            {formatPercentChange(priceChangePercent)}
           </div>
         </div>
         <div>
           <div className="text-muted-foreground">24h High</div>
-          <div className="font-medium">{formatNumber(highPrice)}</div>
+          <div className="font-medium">{formatPrice(highPrice)}</div>
         </div>
         <div>
           <div className="text-muted-foreground">24h Volume</div>

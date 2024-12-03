@@ -18,8 +18,8 @@ export function TradeForm({
   amount,
   onPriceChange,
   onAmountChange,
-  baseAsset = 'BTC',
-  quoteAsset = 'USDT'
+  baseAsset,
+  quoteAsset
 }: TradeFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
