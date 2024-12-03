@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import Highcharts from 'highcharts/highstock'
 import HighchartsReact from 'highcharts-react-official'
 import { useTheme } from 'next-themes'
@@ -36,182 +36,186 @@ const CandlestickChart = ({ data, interval, onIntervalChange, baseAsset, quoteAs
   const selectedInterval = intervals.find((int) => int.value === interval)
   const isDefaultInterval = defaultIntervals.includes(interval)
 
-  const getOptions = (isDark: boolean): Highcharts.Options => ({
-    chart: {
-      type: 'candlestick',
-      height: '100%',
-      backgroundColor: 'transparent',
-      style: {
-        fontFamily: 'Inter, sans-serif'
-      },
-      panning: {
-        enabled: true,
-        type: 'xy'
-      },
-      panKey: 'shift',
-      zooming: {
-        type: 'xy'
-      }
-    },
-    title: {
-      text: undefined
-    },
-    rangeSelector: {
-      enabled: false
-    },
-    yAxis: [
-      {
-        labels: {
-          align: 'left',
-          x: 8,
-          style: {
-            color: isDark ? '#e5e7eb' : '#374151'
-          },
-          formatter: function () {
-            return formatPrice(this.value as number)
-          }
-        },
-        opposite: true,
-        title: {
-          text: 'Price',
-          style: {
-            color: isDark ? '#e5e7eb' : '#374151'
-          },
-          align: 'high',
-          offset: 0,
-          rotation: 0,
-          y: -10,
-          x: -8
-        },
-        height: '40%',
-        lineWidth: 2,
-        resize: {
-          enabled: true
-        },
-        gridLineColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-        minPadding: 0.1,
-        maxPadding: 0.1,
-        startOnTick: false,
-        endOnTick: false,
-        alignTicks: false,
-        softMin: undefined,
-        softMax: undefined
-      },
-      {
-        labels: {
-          align: 'left',
-          x: 8,
-          style: {
-            color: isDark ? '#e5e7eb' : '#374151'
-          },
-          formatter: function () {
-            return formatVolume(this.value as number)
-          }
-        },
-        opposite: true,
-        title: {
-          text: 'Volume',
-          style: {
-            color: isDark ? '#e5e7eb' : '#374151'
-          },
-          align: 'high',
-          offset: 0,
-          rotation: 0,
-          y: -10,
-          x: -8
-        },
-        top: '72%',
-        height: '28%',
-        offset: 0,
-        lineWidth: 2,
-        gridLineColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-        minPadding: 0.1,
-        maxPadding: 0.1,
-        startOnTick: false,
-        endOnTick: false,
-        alignTicks: false
-      }
-    ],
-    xAxis: {
-      minPadding: 0,
-      maxPadding: 0,
-      labels: {
-        style: {
-          color: isDark ? '#e5e7eb' : '#374151'
-        }
-      }
-    },
-    plotOptions: {
-      candlestick: {
-        maxPointWidth: 15,
-        cropThreshold: 500
-      },
-      series: {
-        animation: false,
-        dataGrouping: {
-          enabled: true,
-          groupPixelWidth: 5
-        }
-      }
-    },
-    series: [
-      {
+  const getOptions = useCallback(
+    (isDark: boolean): Highcharts.Options => ({
+      chart: {
         type: 'candlestick',
-        name: `${baseAsset}/${quoteAsset}`,
-        data: data,
-        color: 'hsl(var(--down-color))',
-        upColor: 'hsl(var(--up-color))',
-        lineColor: 'hsl(var(--down-color))',
-        upLineColor: 'hsl(var(--up-color))'
-      }
-      // {
-      //   type: 'column',
-      //   name: 'Volume',
-      //   data: data.map(([timestamp, open, _, __, close]) => ({
-      //     x: timestamp,
-      //     y: 0,
-      //     color: open < close ? 'hsla(var(--up-color), 0.5)' : 'hsla(var(--down-color), 0.5)'
-      //   })),
-      //   yAxis: 1
-      // }
-    ],
-    tooltip: {
-      shared: true,
-      formatter: function (this: any) {
-        const point = this.points?.[0]?.options || this.point
-
-        const candleData = point as any
-        return `<b>${Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x)}</b><br/>
-                Open: ${formatPrice(candleData.open)}<br/>
-                High: ${formatPrice(candleData.high)}<br/>
-                Low: ${formatPrice(candleData.low)}<br/>
-                Close: ${formatPrice(candleData.close)}<br/>
-                `
-      }
-    },
-    navigator: {
-      enabled: true,
-      height: 30,
-      margin: 24,
-      series: {
-        color: isDark ? '#e5e7eb' : '#374151',
-        lineWidth: 1
+        height: '100%',
+        backgroundColor: 'transparent',
+        style: {
+          fontFamily: 'Inter, sans-serif'
+        },
+        panning: {
+          enabled: true,
+          type: 'xy'
+        },
+        panKey: 'shift',
+        zooming: {
+          type: 'xy'
+        }
       },
+      title: {
+        text: undefined
+      },
+      rangeSelector: {
+        enabled: false
+      },
+      yAxis: [
+        {
+          labels: {
+            align: 'left',
+            x: 8,
+            style: {
+              color: isDark ? '#e5e7eb' : '#374151'
+            },
+            formatter: function () {
+              return formatPrice(this.value as number)
+            }
+          },
+          opposite: true,
+          title: {
+            text: 'Price',
+            style: {
+              color: isDark ? '#e5e7eb' : '#374151'
+            },
+            align: 'high',
+            offset: 0,
+            rotation: 0,
+            y: -10,
+            x: -8
+          },
+          height: '40%',
+          lineWidth: 2,
+          resize: {
+            enabled: true
+          },
+          gridLineColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+          minPadding: 0.1,
+          maxPadding: 0.1,
+          startOnTick: false,
+          endOnTick: false,
+          alignTicks: false,
+          softMin: undefined,
+          softMax: undefined
+        },
+        {
+          labels: {
+            align: 'left',
+            x: 8,
+            style: {
+              color: isDark ? '#e5e7eb' : '#374151'
+            },
+            formatter: function () {
+              return formatVolume(this.value as number)
+            }
+          },
+          opposite: true,
+          title: {
+            text: 'Volume',
+            style: {
+              color: isDark ? '#e5e7eb' : '#374151'
+            },
+            align: 'high',
+            offset: 0,
+            rotation: 0,
+            y: -10,
+            x: -8
+          },
+          top: '72%',
+          height: '28%',
+          offset: 0,
+          lineWidth: 2,
+          gridLineColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+          minPadding: 0.1,
+          maxPadding: 0.1,
+          startOnTick: false,
+          endOnTick: false,
+          alignTicks: false
+        }
+      ],
       xAxis: {
+        minPadding: 0,
+        maxPadding: 0,
         labels: {
           style: {
             color: isDark ? '#e5e7eb' : '#374151'
           }
         }
+      },
+      plotOptions: {
+        candlestick: {
+          maxPointWidth: 15,
+          cropThreshold: 500
+        },
+        series: {
+          animation: false,
+          dataGrouping: {
+            enabled: true,
+            groupPixelWidth: 5
+          }
+        }
+      },
+      series: [
+        {
+          type: 'candlestick',
+          name: `${baseAsset}/${quoteAsset}`,
+          data: data,
+          color: 'hsl(var(--down-color))',
+          upColor: 'hsl(var(--up-color))',
+          lineColor: 'hsl(var(--down-color))',
+          upLineColor: 'hsl(var(--up-color))'
+        }
+        // {
+        //   type: 'column',
+        //   name: 'Volume',
+        //   data: data.map(([timestamp, open, _, __, close]) => ({
+        //     x: timestamp,
+        //     y: 0,
+        //     color: open < close ? 'hsla(var(--up-color), 0.5)' : 'hsla(var(--down-color), 0.5)'
+        //   })),
+        //   yAxis: 1
+        // }
+      ],
+      tooltip: {
+        shared: true,
+        formatter: function (this: any) {
+          const point = this.points?.[0]?.point || this.point
+
+          if (!point) return ''
+
+          return `<b>${Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x)}</b><br/>
+                Open: ${formatPrice(point.open)}<br/>
+                High: ${formatPrice(point.high)}<br/>
+                Low: ${formatPrice(point.low)}<br/>
+                Close: ${formatPrice(point.close)}<br/>
+                `
+        }
+      },
+      navigator: {
+        enabled: true,
+        height: 30,
+        margin: 24,
+        series: {
+          color: isDark ? '#e5e7eb' : '#374151',
+          lineWidth: 1
+        },
+        xAxis: {
+          labels: {
+            style: {
+              color: isDark ? '#e5e7eb' : '#374151'
+            }
+          }
+        }
+      },
+      scrollbar: {
+        enabled: false
+      },
+      credits: {
+        enabled: false
       }
-    },
-    scrollbar: {
-      enabled: false
-    },
-    credits: {
-      enabled: false
-    }
-  })
+    }),
+    []
+  )
 
   useEffect(() => {
     if (chartRef.current) {
@@ -219,7 +223,7 @@ const CandlestickChart = ({ data, interval, onIntervalChange, baseAsset, quoteAs
       const newOptions = getOptions(isDark)
       chartRef.current.chart.update(newOptions, true)
     }
-  }, [theme, data])
+  }, [theme, data, getOptions])
 
   return (
     <div className="w-full h-full flex flex-col">
