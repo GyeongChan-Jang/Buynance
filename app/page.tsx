@@ -47,7 +47,11 @@ export default function Home() {
                   Start Trading
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
-                <Button size="lg" variant="outline">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => window.open('https://magnificent-pail-568.notion.site/Kronon-Labs-Frontend-Recruitment-Task-150aab50e67e8065a4edd683d11423e3?pvs=74', '_blank', 'noopener,noreferrer')}
+                >
                   Learn More
                 </Button>
               </div>
