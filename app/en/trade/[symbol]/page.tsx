@@ -31,7 +31,7 @@ export default function TradePage() {
           className={cn(
             'w-full md:w-[300px] shrink-0',
             'min-w-[250px] md:max-w-[300px]',
-            'h-[400px] md:h-full',
+            'min-h-[600px] md:h-full',  
             'order-3 md:order-1',
             'border-t md:border-t-0 md:border-r',
             'flex flex-col'

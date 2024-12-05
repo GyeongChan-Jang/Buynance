@@ -65,9 +65,9 @@ export const OrderBook = ({ symbol, baseAsset, quoteAsset }: OrderBookProps) => 
         </h2>
       </div>
 
-      <div className="flex-1 flex flex-col text-xs">
+      <div className="flex-1 flex flex-col text-xs md:flex-col">
         {/* Asks (Sell Orders) */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden min-h-[200px]">
           <table className="w-full h-full relative">
             <thead className="sticky top-0 bg-card">
               <tr className="text-muted-foreground">
@@ -115,7 +115,7 @@ export const OrderBook = ({ symbol, baseAsset, quoteAsset }: OrderBookProps) => 
         </div>
 
         {/* Bids (Buy Orders) */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden min-h-[200px]">
           <table className="w-full h-full relative">
             <tbody>
               {orderBook.bids.slice(0, 14).map((bid, i) => (
